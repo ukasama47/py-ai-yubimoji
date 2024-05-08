@@ -13,11 +13,7 @@ CATEGORIES = [
     u'u',
     u'e',
     u'o',
-    u'ka',
-    u'ki',
-    u'ku',
-    u'ke',
-    u'ko']
+]
 
 # 画像サイズ
 IMG_SIZE = 150
