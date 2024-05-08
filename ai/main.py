@@ -19,11 +19,7 @@ CATEGORIES = [
     u'u',
     u'e',
     u'o',
-    u'ka',
-    u'ki',
-    u'ku',
-    u'ke',
-    u'ko']
+]
 
 CATEGORIES_NAME = [
     u'あ',
@@ -31,11 +27,7 @@ CATEGORIES_NAME = [
     u'う',
     u'え',
     u'お',
-    u'か',
-    u'き',
-    u'く',
-    u'け',
-    u'こ']
+]
 
 # 画像サイズ
 IMG_SIZE = 150
