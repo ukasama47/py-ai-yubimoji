@@ -18,11 +18,7 @@ CATEGORIES = [
     u'u',
     u'e',
     u'o',
-    u'ka',
-    u'ki',
-    u'ku',
-    u'ke',
-    u'ko']
+]
 
 # 密度
 DENSE_SIZE = len(CATEGORIES)
