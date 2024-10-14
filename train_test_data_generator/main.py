@@ -74,10 +74,17 @@ print("Y_TEST shape:", Y_TEST.shape)
 
 # 教師／テストデータを保存する
 
+# try:
+#     data = [X_TRAIN, X_TEST, Y_TRAIN, Y_TEST]
+#     np.savez(TRAIN_TEST_DATA, data)
+#     print(u'教師／テストデータの作成が完了しました。: {}'.format(TRAIN_TEST_DATA))
+# except Exception as e:
+#     print("Error saving data:", e)
+
+# 教師／テストデータを保存する
 try:
-    data = [X_TRAIN, X_TEST, Y_TRAIN, Y_TEST]
-    np.save(TRAIN_TEST_DATA, data)
+    # 各データセットを個別に保存
+    np.savez(TRAIN_TEST_DATA, X_TRAIN=X_TRAIN, X_TEST=X_TEST, Y_TRAIN=Y_TRAIN, Y_TEST=Y_TEST)
     print(u'教師／テストデータの作成が完了しました。: {}'.format(TRAIN_TEST_DATA))
 except Exception as e:
     print("Error saving data:", e)
-
