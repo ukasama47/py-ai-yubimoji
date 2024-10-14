@@ -1,3 +1,4 @@
+
 # # # -*- coding: utf-8 -*-
 
 # # #モデルの構築
@@ -223,9 +224,10 @@
 # # ----- /モデル保存 ----- #
 
 
+
 # -*- coding: utf-8 -*-
 
-# モデルの構築
+
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -247,6 +249,7 @@ CATEGORIES = [
 DENSE_SIZE = len(CATEGORIES)
 # 画像サイズ
 IMG_SIZE = 150
+
 INPUT_SHAPE = (IMG_SIZE, IMG_SIZE, 3)
 
 # データ保存先
@@ -269,61 +272,62 @@ model.add(layers.Dropout(0.5))
 model.add(layers.Dense(512, activation="relu"))
 model.add(layers.Dense(DENSE_SIZE, activation="sigmoid"))
 
-# モデル構成の確認
+# # モデル構成の確認
+
+# #INPUT_SHAPE = (IMG_SIZE, IMG_SIZE,3)
+# # 教師データ
+# X_TRAIN = []
+# Y_TRAIN = []
+# # テストデータ
+# X_TEST = []
+# Y_TEST = []
+# # データ保存先
+# TRAIN_TEST_DATA = '/../AyatakaAI_py/data/train_test_data/data.npy'
+# # モデル保存先
+# MODEL_ROOT_DIR = '/../AyatakaAI_py/data/model/'
+
+
+# ----- モデル構築 ----- #
+model = keras.models.Sequential()
+model.add(layers.Conv2D(32,(3,3),activation="relu",input_shape=INPUT_SHAPE))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(64,(3,3),activation="relu"))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(128,(3,3),activation="relu"))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Conv2D(128,(3,3),activation="relu"))
+model.add(layers.MaxPooling2D((2,2)))
+model.add(layers.Flatten())
+model.add(layers.Dropout(0.5))
+model.add(layers.Dense(512,activation="relu"))
+model.add(layers.Dense(DENSE_SIZE,activation="sigmoid"))
+
+#モデル構成の確認
+
 model.summary()
 # ----- /モデル構築 ----- #
 
 # ----- モデルコンパイル ----- #
 model.compile(loss="binary_crossentropy",
-              optimizer=keras.optimizers.RMSprop(learning_rate=1e-4),
+              optimizer=keras.optimizers.RMSprop(lr=1e-4),
               metrics=["acc"])
 # ----- /モデル構築 ----- #
 
-# ----- データ読み込みと整形 ----- #
-try:
-    # 教師データとテストデータを読み込む
-    data = np.load(TRAIN_TEST_DATA, allow_pickle=True)
-    
-    # ファイル内の配列名を確認
-    print(f"データの内容: {data.files}")
-    
-    # データの読み込み
-    X_TRAIN = data.get('X_TRAIN')
-    X_TEST = data.get('X_TEST')
-    Y_TRAIN = data.get('Y_TRAIN')
-    Y_TEST = data.get('Y_TEST')
-    
-    # 読み込めているか確認
-    if X_TRAIN is None or X_TEST is None or Y_TRAIN is None or Y_TEST is None:
-        raise KeyError("データの読み込みに失敗しました。`data.npy.npz` 内の配列名を確認してください。")
-    
-    # データの確認
-    print(f"X_TRAIN shape: {X_TRAIN.shape}")
-    print(f"Y_TRAIN shape: {Y_TRAIN.shape}")
-    print(f"X_TEST shape: {X_TEST.shape}")
-    print(f"Y_TEST shape: {Y_TEST.shape}")
-
-except KeyError as e:
-    print(f"データの読み込みエラー: {e}")
-except Exception as e:
-    print(f"予期しないエラーが発生しました: {e}")
-
-
 # ----- モデル学習 ----- #
-history = model.fit(
-    X_TRAIN,
-    Y_TRAIN,
-    epochs=10,
-    batch_size=6,
-    validation_data=(X_TEST, Y_TEST)
-)
+# 教師データとテストデータを読み込む
+X_TRAIN, X_TEST, Y_TRAIN, Y_TEST = np.load(TRAIN_TEST_DATA, allow_pickle=True)
+model = model.fit(X_TRAIN,
+                  Y_TRAIN,
+                  epochs=10,
+                  batch_size=6,
+                  validation_data=(X_TEST, Y_TEST))
 # ----- /モデル学習 ----- #
 
 # ----- 学習結果プロット ----- #
-acc = history.history['acc']
-val_acc = history.history['val_acc']
-loss = history.history['loss']
-val_loss = history.history['val_loss']
+acc = model.history['acc']
+val_acc = model.history['val_acc']
+loss = model.history['loss']
+val_loss = model.history['val_loss']
 
 epochs = range(len(acc))
 
@@ -331,8 +335,10 @@ plt.plot(epochs, acc, 'bo', label='Training acc')
 plt.plot(epochs, val_acc, 'b', label='Validation acc')
 plt.title('Training and validation accuracy')
 plt.legend()
+
 if not os.path.exists(MODEL_ROOT_DIR):
     os.makedirs(MODEL_ROOT_DIR)
+
 plt.savefig(os.path.join(MODEL_ROOT_DIR, 'Training_and_validation_accuracy.png'))
 
 plt.figure()
@@ -346,6 +352,7 @@ plt.savefig(os.path.join(MODEL_ROOT_DIR, 'Training_and_validation_loss.png'))
 
 # ----- モデル保存 ----- #
 # モデル保存
+
 json_string = model.to_json()
 open(os.path.join(MODEL_ROOT_DIR, 'model_predict.json'), 'w').write(json_string)
 
@@ -354,3 +361,12 @@ open(os.path.join(MODEL_ROOT_DIR, 'model_predict.json'), 'w').write(json_string)
 model.save_weights(os.path.join(MODEL_ROOT_DIR, 'model_predict.weights.h5'))
 
 # ----- /モデル保存 ----- #
+
+json_string = model.model.to_json()
+open(os.path.join(MODEL_ROOT_DIR, 'model_predict.json'), 'w').write(json_string)
+
+#重み保存
+model.model.save_weights(os.path.join(MODEL_ROOT_DIR, 'model_predict.hdf5'))
+# ----- /モデル保存 ----- #
+
+

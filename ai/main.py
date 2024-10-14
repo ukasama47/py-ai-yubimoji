@@ -1,3 +1,4 @@
+
 # # -*- coding: utf-8 -*-
 
 # import tensorflow as tf
@@ -57,6 +58,7 @@
 #     print(u'綾鷹ではなく' + str(CATEGORIES_NAME[np.argmax(features[0])]) + 'が選ばれました。')
 # print("----------------------------------------------")
 
+
 # -*- coding: utf-8 -*-
 
 import tensorflow as tf
@@ -68,9 +70,11 @@ import sys
 import os
 
 # モデル保存先
+
 MODEL_ROOT_DIR = '../data/model/'
 MODEL_PATH = os.path.join(MODEL_ROOT_DIR, 'model_predict.json')
 WEIGHT_PATH = os.path.join(MODEL_ROOT_DIR, 'model_predict.weights.h5')
+
 
 # カテゴリ
 CATEGORIES = [
@@ -91,6 +95,7 @@ CATEGORIES_NAME = [
 
 # 画像サイズ
 IMG_SIZE = 150
+
 INPUT_SHAPE = (IMG_SIZE, IMG_SIZE, 3)
 
 # モデルを読み込む
@@ -101,16 +106,27 @@ except Exception as e:
     print("モデルまたは重みの読み込みエラー:", e)
     sys.exit(1)
 
+INPUT_SHAPE = (IMG_SIZE, IMG_SIZE,3)
+
+# モデルを読み込む
+model = keras.models.model_from_json(open(MODEL_PATH).read())
+model.load_weights(WEIGHT_PATH)
+
+
 # 入力引数から画像を読み込む
 args = sys.argv
 img = keras.preprocessing.image.load_img(args[1], target_size=INPUT_SHAPE)
 
+
 # 画像を配列に変換し、スケーリング
 x = keras.preprocessing.image.img_to_array(img) / 255.0  # 0から1の範囲にスケーリング
+
+
 x = np.expand_dims(x, axis=0)
 
 # モデルで予測する
 features = model.predict(x)
+
 
 # 予測結果を表示
 print("確率：")
@@ -122,3 +138,4 @@ print("計算結果")
 predicted_index = np.argmax(features[0])
 print(u'指文字は' + str(CATEGORIES_NAME[predicted_index]) + 'ですね。')
 print("----------------------------------------------")
+

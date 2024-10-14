@@ -35,7 +35,8 @@ Y_TRAIN = []
 X_TEST = []
 Y_TEST = []
 # データ保存先
-TRAIN_TEST_DATA = '../data/train_test_data/data.npy'
+
+TRAIN_TEST_DATA = '../data/train_test_data/data.npy.npz'
 
 
 # カテゴリごとに処理する
@@ -61,6 +62,7 @@ Y = keras.utils.to_categorical(Y, DENSE_SIZE)
 
 # 教師データとテストデータを分ける
 X_TRAIN, X_TEST, Y_TRAIN, Y_TEST = train_test_split(X, Y, test_size=0.20)
+
 print("X_TRAIN shape:", X_TRAIN.shape)
 print("X_TEST shape:", X_TEST.shape)
 print("Y_TRAIN shape:", Y_TRAIN.shape)
@@ -88,3 +90,10 @@ try:
     print(u'教師／テストデータの作成が完了しました。: {}'.format(TRAIN_TEST_DATA))
 except Exception as e:
     print("Error saving data:", e)
+
+
+# 教師／テストデータを保存する
+np.save(TRAIN_TEST_DATA, (X_TRAIN, X_TEST, Y_TRAIN, Y_TEST))
+print(u'教師／テストデータの作成が完了しました。: {}'.format(TRAIN_TEST_DATA))
+
+
